@@ -1,0 +1,92 @@
+{
+	"_urlPatterns": ["^https?:\\/\\/.+\\.tumblr\\.com\\/?(?!tagged)"],
+	"posts":
+	{
+		"_xpath": "//div[@class='post']",
+		"id": 
+		{
+			"_xpath": ".",
+			"_transformations": 
+			[
+				{
+					"_type": "GetAttributeTransformation",
+					"_attributename": "id"
+				}
+			]
+		},
+		"quote": 
+		{
+			"_xpath": ".//div[@class='copy' or contains(@class,'quote')]",
+			"_transformation": "RemoveExtraWhitespaceTransformation"
+		},
+		"body": 
+		{
+			"_xpath": ".//div[contains(@class,'caption')]",
+			"_transformation": "RemoveExtraWhitespaceTransformation"
+		},
+		"images": 
+		{
+			"_xpath": ".//*[contains(@class,'photo') or contains(@class,'media')]//img",
+			"_transformations": 
+			[
+				{
+					"_type": "GetAttributeTransformation",
+					"_attributename": "src"
+				}
+			]
+		},
+		"tags": ".//section[contains(@class,'has-tags')]/a",
+		"postedDate": 
+		{
+			"_xpath": ".//div[@class='datetime']//a[@class='permalink']",
+			"_transformations": 
+			[
+				{
+					"_type": "DateTimeTransformation"
+				}
+			]
+		}
+	},
+	"articles":
+	{
+		"_xpath": "//article[contains(@class,'post')]",
+		"id": 
+		{
+			"_xpath": ".",
+			"_transformations": 
+			[
+				{
+					"_type": "GetAttributeTransformation",
+					"_attributename": "data-post-id"
+				}
+			]
+		},
+		"body": 
+		{
+			"_xpath": ".//*[contains(@class,'post-content')]",
+			"_transformation": "RemoveExtraWhitespaceTransformation"
+		},
+		"images": 
+		{
+			"_xpath": ".//*[contains(@class,'photo')]//img",
+			"_transformations": 
+			[
+				{
+					"_type": "GetAttributeTransformation",
+					"_attributename": "src"
+				}
+			]
+		},
+		"tags": ".//section[contains(@class,'has-tags')]/a",
+		"postedDate": 
+		{
+			"_xpath": ".//div[@class='datetime']//a[@class='permalink']",
+			"_transformations": 
+			[
+				{
+					"_type": "DateTimeTransformation"
+				}
+			]
+		}
+	}
+}

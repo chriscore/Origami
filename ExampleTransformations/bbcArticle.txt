@@ -1,0 +1,5 @@
+{
+  "_urlPatterns": ["^https?:\\/\\/www\\.bbc\\.co\\.uk/news\\/.+\\d+"],
+  "title": "//div[contains(@class, 'story-body')]//h1",
+  "dateTime": "//div[contains(@class, 'story-body')]//div[contains(@class, 'date')]"  
+}

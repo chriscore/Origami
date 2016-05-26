@@ -1,0 +1,28 @@
+{
+	"_urlPatterns": [ "^https?:\\/\\/.*\\.craigslist\\.[A-Za-z.]+\\/.+/\\d+.html$" ],
+	"title": "//span[@id='titletextonly']",
+	"body": "//section[@id='postingbody']",
+	"photourl": "//section[@class='userbody']//div[@class='gallery']//img",
+	"dateTime": 
+	{
+		"_xpath": "//time[@class='timeago']",
+		"_transformations": 
+		[
+			{
+				"_type": "DateTimeTransformation",
+				"_attributename": "datetime"
+			}
+		]
+	},
+	"postid": 
+	{
+		"_xpath": "//p[@class='postinginfo'][contains(text(), 'post id')]",
+		"_transformations": 
+		[
+			{
+				"_type": "RegexMatchTransformation",
+				"_pattern": "post id: (\\d+)"
+			}	
+		]
+	}
+}

@@ -1,0 +1,117 @@
+{
+	"_urlPatterns": ["^https?:\\/\\/derp\\.com.*"],
+	"items":
+	{
+		"_xpath": "//div[contains(@class,'js-actionable-tweet')]",
+		"id":
+		{
+			"_xpath": ".",
+			"_transformations": 
+			[
+				{
+					"_type": "GetAttributeTransformation",
+					"_attributename": "data-item-id"
+				}
+			]
+		},
+		"parentid": 
+		{
+			"_xpath": ".",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-parent-id"
+					}
+				]
+		},
+		"content":
+		{
+			"text": ".//div[@class='js-tweet-text-container']",
+			"image": "//images",
+			"video": "//videos",
+			"tags": "//tag[@]"
+		},
+		"author":
+		{
+			"_xpath": ".",
+			"username":
+			{
+				"_xpath": ".",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-name"
+					}
+				]
+			},
+			"displayname":
+			{
+				"_xpath": ".",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-screen-name"
+					}
+				]
+			},
+			"id":
+			{
+				"_xpath": ".",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-user-id"
+					}
+				]
+			}
+		},
+		"recipient":
+		{
+			"_xpath": ".",
+			"username":
+			{
+				"_xpath": ".",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-recipient-name"
+					}
+				]
+			},
+			"displayname":
+			{
+				"_xpath": ".",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-recipient-screen-name"
+					}
+				]
+			},
+			"id":
+			{
+				"_xpath": ".",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-recipient-user-id"
+					}
+				]
+			}
+		},
+		"opaque":
+		{
+			"retweets": "//div[@class='retweet-count']",
+			"favorites": "//div[@class='favorite-count']",
+			"customfield1": "//custom/selector",
+			"customfield2": "//custom/selector[@class='2']"
+		}
+	}
+}

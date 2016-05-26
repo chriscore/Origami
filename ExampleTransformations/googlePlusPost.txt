@@ -1,0 +1,84 @@
+{
+	"_urlPatterns": ["^https?:\\/\\/plus\\.google\\.com\\/.*\\/posts\\/.*"],
+	"items":
+	{
+		"_xpath": "//div[@class='LHyahc']//ul//li",
+		"id":
+		{
+			"_xpath": ".",
+			"_transformations": 
+			[
+				{
+					"_type": "StringReplaceTransformation",
+					"_oldvalue": "#",
+					"_newvalue": ".",
+					"_attributename": "data-commentid"
+				}
+			]
+		},
+		"parentid": 
+		{
+			"_xpath": "//div[@class='E4TZmd']//div[@class='KwDIr']",
+			"_transformations": 
+			[
+				{
+					"_type": "RegexMatchTransformation",
+					"_attributename": "jsdata",
+					"_pattern": "\\w+;(\\w+);\\`w+"
+				}
+			]
+		},
+		"content":
+		{
+			"text": ".//div[@class='PGA51c']",
+			"image": "//images",
+			"video": "//videos",
+			"tags": "//tag"
+		},
+		"author":
+		{
+			"_xpath": ".",
+			"username": ".//a[@class='e9VPPd']",
+			"displayname": ".//a[@class='e9VPPd']",
+			"id":
+			{
+				"_xpath": ".//a[@class='X1U4Ie FhCbmb']",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-profileid"
+					}
+				]
+			}
+		},
+		"recipient":
+		{
+			"_xpath": ".",
+			"username": "//div[@class='xHn24c']//a",
+			"displayname": "//div[@class='xHn24c']//a",
+			"id":
+			{
+				"_xpath": "//div[@class='xHn24c']//a",
+				"_transformations": 
+				[
+					{
+						"_type": "RegexMatchTransformation",
+						"_attributename": "jslog",
+						"_pattern": "; \\d:(\\d+); track:"
+					}
+				]
+			}
+		},
+		"dateposted":
+		{
+			"_xpath": ".//div[@class='lwkoKc']",
+			"_transformations":
+			[
+				{
+					"_type": "DateTimeTransformation"
+				}
+			]
+		}
+	}
+}

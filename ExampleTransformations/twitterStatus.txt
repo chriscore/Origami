@@ -1,0 +1,71 @@
+{
+	"_urlPatterns": ["^https?:\\/\\/twitter\\.[a-z]*\\/.*\\/status.*"],
+	"tweets":
+	{
+		"_xpath": "//div[contains(@class,'js-actionable-tweet')]",
+		"id":
+		{
+			"_xpath": ".",
+			"_transformations": 
+			[
+				{
+					"_type": "GetAttributeTransformation",
+					"_attributename": "data-item-id"
+				}
+			]
+		},
+		"content":
+		{
+			"text": ".//div[@class='js-tweet-text-container']",
+			"photo":
+			{
+				"_xpath": ".//div[contains(@class,'photo')]//img",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "src"
+					}
+				]
+			}
+		},
+		"author":
+		{
+			"_xpath": ".",
+			"name":
+			{
+				"_xpath": ".",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-name"
+					}
+				]
+			},
+			"screenName":
+			{
+				"_xpath": ".",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-screen-name"
+					}
+				]
+			},
+			"id":
+			{
+				"_xpath": ".",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-user-id"
+					}
+				]
+			}
+		}
+	}
+	
+}

@@ -1,0 +1,23 @@
+{
+	"_urlPatterns": ["^https?:\\/\\/www\\.google\\..*\\/search.*"],
+	"_requiresJS": true,
+	"Results":
+	{
+		"_xpath": "//div[@id='rso']//h3[@class='r']//a",
+		"text":
+		{
+			"_xpath": "."
+		},
+		"link":
+		{
+			"_xpath": ".",
+			"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "href"
+					}
+				]
+		}
+	}
+}

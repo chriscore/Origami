@@ -1,0 +1,18 @@
+{
+	"_urlPatterns": ["^https?:\\/\\/www\\.bbc\\.co\\.uk\\/food\\/recipes\\/.+"],
+	"title": 
+	{
+		"_xpath": "//h1[contains(@class, 'content-title')][@itemprop='name']",
+		"_transformation": "RemoveExtraWhitespaceTransformation"
+	},
+	"ingredients": 
+	{
+		"_xpath": "//div[@class='recipe-ingredients']",
+		"_transformation": "RemoveExtraWhitespaceTransformation"
+	},
+	"method": 
+	{
+		"_xpath": "//div[@class='recipe-method-wrapper']",
+		"_transformation": "RemoveExtraWhitespaceTransformation"
+	},
+}

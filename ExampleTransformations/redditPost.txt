@@ -1,0 +1,14 @@
+{
+	"_urlPatterns": ["^https?:\\/\\/www\\.reddit\\.com\\/r\\/.+\\/comments\\/.+"],
+	"topLevel":
+	{
+		"_xpath": "//div[@id='siteTable']",
+		"title": ".//p[@class='title']",
+		"body": ".//div[@class='md']"
+	},
+	"comments":
+	{
+		"_xpath": "//div[@data-type='comment']",
+		"comment": ".//div[@class='md']"
+	}
+}
