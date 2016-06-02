@@ -1,35 +1,39 @@
 # Origami
 Turn HTML into structured data
+
 [![chriscore MyGet Build Status](https://www.myget.org/BuildSource/Badge/chriscore?identifier=2e1ed033-4736-4537-9a85-1ad807bf13c3)](https://www.myget.org/)
-Origami is a 
+
+Origami is a framework and REST API for structured data extraction from HTML. The framework is configuration driven, and it is easy to write new configurations that support new types of unstructured HTML data. 
+
+Though Origami is provided with a number of data transformation functions that are used during data extraction (e.g get value of HTML elemnt attribute or return regex match on elemtent text etc), users of the framework may add their own transformations to easily extend the capablities when extracting content. These can be referenced as part of the transform configuration files.
 
 ## Getting Started
-This repo has a directory containing some example transform files to use and test with.
+This repo has a directory containing some example transform configuration files to use and test with.
 
 ## Usage
 This example trasform file describes the structure of a twitter post and replies.
 TRANSFORM FILE: twitterPost.txt
 ```
 {
-	"_urlPatterns": ["^https?:\\/\\/twitter\\.[a-z]*\\/.*\\/status.*"],
+	"_urlPatterns": ["^https?:\\/\\/twitter\\.[a-z]*\\/.*\\/status.*"],   <-- Regex describes which URL patterns this configuration is valid for
 	"tweets":
 	{
-		"_xpath": "//div[contains(@class,'js-actionable-tweet')]",
-		"id":
+		"_xpath": "//div[contains(@class,'js-actionable-tweet')]",  <-- Describes Xpath selector for all tweets on the page
+		"id":  <-- Will be populated with the tweet ID. The strategy for extracting the ID is dictated in the configuration of this node
 		{
 			"_xpath": ".",
-			"_transformations": 
+			"_transformations":  <-- Describes one or more transformations to be applied to all data matching on the 'id' node 
 			[
 				{
-					"_type": "GetAttributeTransformation",
-					"_attributename": "data-item-id"
+					"_type": "GetAttributeTransformation",  <-- The transformation is extracting a named attribute and returning its value
+					"_attributename": "data-item-id"  <-- Describes the name of the attribute to extract: 'data-item-id'
 				}
 			]
 		},
-		"content":
+		"content":  <-- A node to hold the tweet text/image content 
 		{
-			"text": ".//div[@class='js-tweet-text-container']",
-			"photo":
+			"text": ".//div[@class='js-tweet-text-container']",  <-- Xpath describing the location of the tweet text, relative to the parent node, from 'tweets' above
+			"photo":  <-- Will hold URLs of any images found in the tweet
 			{
 				"_xpath": ".//div[contains(@class,'photo')]//img",
 				"_transformations": 
