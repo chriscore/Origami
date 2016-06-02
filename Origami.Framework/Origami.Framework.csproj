@@ -79,6 +79,7 @@
     <Compile Include="Transformations\ITransformationFromObject.cs" />
     <Compile Include="Transformations\ListTitleTransformation.cs" />
     <Compile Include="Transformations\RegexMatchTransformation.cs" />
+    <Compile Include="Transformations\RegexReplaceTransformation.cs" />
     <Compile Include="Transformations\RemoveExtraWhitespaceTransformation.cs" />
     <Compile Include="Transformations\SplitTransformation.cs" />
     <Compile Include="Transformations\StringReplaceTransformation.cs" />

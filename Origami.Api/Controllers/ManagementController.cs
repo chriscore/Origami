@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Web.Http;
 using Origami.Api.Properties;
 using Origami.Framework;
@@ -10,8 +11,38 @@ namespace Origami.Api.Controllers
 {
     public class ManagementController : ApiController
     {
+        private string ExecutingAssemblyName
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_executingAssemblyName)) return _executingAssemblyName;
+
+                _executingAssemblyName = "unknown";
+                var executingTitleAttribute = (AssemblyTitleAttribute)Assembly
+                    .GetExecutingAssembly()
+                    .GetCustomAttributes(typeof(AssemblyTitleAttribute), false)[0];
+
+                if (executingTitleAttribute.Title.Length > 0)
+                {
+                    _executingAssemblyName = executingTitleAttribute.Title;
+                }
+
+                return _executingAssemblyName;
+            }
+
+        }
+        private string _executingAssemblyName;
+
+        public string AssemblyVersion => Assembly.GetExecutingAssembly()?.GetName()?.Version?.ToString();
+        
         [HttpGet]
-        public object ListConfig()
+        public object Version()
+        {
+            return new { Name = ExecutingAssemblyName, Version = AssemblyVersion };
+        }
+
+        [HttpGet]
+        public object ListTransforms()
         {
             var queryString = Request.GetQueryNameValuePairs();
 
@@ -38,7 +69,7 @@ namespace Origami.Api.Controllers
         }
         
         [HttpPost]
-        public object PostConfig()
+        public object PostTransforms()
         {
             var queryString = Request.GetQueryNameValuePairs();
 

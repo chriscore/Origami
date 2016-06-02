@@ -1,0 +1,25 @@
+{
+	"_urlPatterns": ["^https?:\\/\\/www\\.instagram\\..*\\/p.*"],
+	"_requiresJS": true,
+	"_xpath": "//section",
+	"Comments":
+	{
+		"_xpath": ".//ul/li",
+		"text": 
+		{
+			"_xpath": ".//span",
+			"_transformations":
+			[
+				{
+					"_type": "RegexReplaceTransformation",
+					"_pattern": "(?=<!--)([\\s\\S]*?)-->"
+				}
+			]
+			
+		},
+		"author": 
+		{
+			"_xpath": ".//a[contains(@class,'_4zhc5')]"
+		}
+	}
+}

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Origami.Framework.Config;
 
 namespace Origami.Framework
@@ -100,14 +101,24 @@ namespace Origami.Framework
             };
         }
 
-        public IEnumerable<object> ExtractAll(string url, string html)
+        public IEnumerable<TransformResults> ExtractAll(string url, string html, string collectionSource = "Direct")
         {
             var extractors = FindAllExtractors(url);
-            return extractors.Select(extractor => new
-            {
-                Name = extractor.Item1.ConfigName,
-                Data = extractor?.Item2?.Extract(html)
-            });
+            return extractors.Select(extractor => new TransformResults(extractor?.Item1.ConfigName, extractor?.Item2?.Extract(html), collectionSource));
         }
+    }
+
+    public class TransformResults
+    {
+        public TransformResults(string name, JContainer data, string collectionSource)
+        {
+            this.Name = name;
+            this.Data = data;
+            this.CollectionSource = collectionSource;
+        }
+
+        public string Name { get; set; }
+        public JContainer Data { get; set; }
+        public string CollectionSource { get; set; }
     }
 }

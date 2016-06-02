@@ -25,7 +25,7 @@ namespace Origami.Api.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:/ScraperTransformations")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\GitRepos\\Origami\\ExampleTransformations")]
         public string TransformationsDirectory {
             get {
                 return ((string)(this["TransformationsDirectory"]));

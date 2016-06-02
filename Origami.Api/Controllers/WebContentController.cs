@@ -1,10 +1,14 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Web.Http;
+using OpenQA.Selenium;
 using Origami.Api.Properties;
 using Origami.Framework;
 using SeleniumWebDriver;
+using SeleniumWebDriver.Helpers;
 
 namespace Origami.Api.Controllers
 {
@@ -36,12 +40,21 @@ namespace Origami.Api.Controllers
             if (renderJs)
             {
                 text = ExtractHtmlWithPhantomJS(url);
-                return extractor.ExtractAll(url, text);
+                var results = extractor.ExtractAll(url, text, "PhantomJS");
+
+                // If phantomJS failed to get anything from the page, try with Chrome for its better JS rendering engine.
+                if (results.All(a => a.Data.Count == 0))
+                {
+                    text = ExtractHtmlWithChrome(url);
+                    results = extractor.ExtractAll(url, text, "Chrome");
+                }
+
+                return results;
             }
             else
             {
                 text = ExtractHtmlWithWebClient(url);
-                return extractor.ExtractAll(url, text);
+                return extractor.ExtractAll(url, text, "WebClient");
             }
         }
 
@@ -92,6 +105,23 @@ namespace Origami.Api.Controllers
                 {
                     throw new WebException($"PhantomJS failed to navigate to url: {url}");
                 }
+                text = driver.PageSource;
+            }
+
+            return text;
+        }
+
+        private static string ExtractHtmlWithChrome(string url)
+        {
+            string text = "";
+            using (var driver = WebDriver.CreateChromeDriver(null))
+            {
+                driver.Navigate().GoToUrl(url);
+                if (driver.Url == "about:blank")
+                {
+                    throw new WebException($"Chrome failed to navigate to url: {url}");
+                }
+                //Thread.Sleep(500);
                 text = driver.PageSource;
             }
 

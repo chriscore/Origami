@@ -1,2 +1,132 @@
 # Origami
-A framework and REST API to extract and transform HTML to structured data, based on openscraping-lib-csharp
+Turn HTML into structured data
+[![chriscore MyGet Build Status](https://www.myget.org/BuildSource/Badge/chriscore?identifier=2e1ed033-4736-4537-9a85-1ad807bf13c3)](https://www.myget.org/)
+Origami is a 
+
+## Getting Started
+This repo has a directory containing some example transform files to use and test with.
+
+## Usage
+This example trasform file describes the structure of a twitter post and replies.
+TRANSFORM FILE: twitterPost.txt
+```
+{
+	"_urlPatterns": ["^https?:\\/\\/twitter\\.[a-z]*\\/.*\\/status.*"],
+	"tweets":
+	{
+		"_xpath": "//div[contains(@class,'js-actionable-tweet')]",
+		"id":
+		{
+			"_xpath": ".",
+			"_transformations": 
+			[
+				{
+					"_type": "GetAttributeTransformation",
+					"_attributename": "data-item-id"
+				}
+			]
+		},
+		"content":
+		{
+			"text": ".//div[@class='js-tweet-text-container']",
+			"photo":
+			{
+				"_xpath": ".//div[contains(@class,'photo')]//img",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "src"
+					}
+				]
+			}
+		},
+		"author":
+		{
+			"_xpath": ".",
+			"name":
+			{
+				"_xpath": ".",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-name"
+					}
+				]
+			},
+			"screenName":
+			{
+				"_xpath": ".",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-screen-name"
+					}
+				]
+			},
+			"id":
+			{
+				"_xpath": ".",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-user-id"
+					}
+				]
+			}
+		}
+	}
+	
+}
+```
+
+Given that twitterPost.txt is saved, the below example can be used to parse a given twitter post URL.
+The correct transform file is chosen, since the URL to parse matches the regex pattern given in the file _urlPatterns property. Results are returned as an array, one result per matching transform file:
+
+### REST API
+```
+void Main()
+{
+	string urlToTransform = "https://twitter.com/someuser/status/6738723782632829";
+	var client = new WebClient();
+	var parsedAsJson = client.DownloadString($"http://localhost:57531/api/WebContent/TransformUrl?url={HttpUtility.UrlEncode(urlToTransform)}");
+}
+```
+
+### Direct
+```
+void Main()
+{
+	string url = "https://twitter.com/someuser/status/6738723782632829";
+	var html = new WebClient().DownloadString(url);
+	var extractor = new MultiExtractor("C:/DirectoryContainingTransform", "*.txt");
+	var parsed = extractor.ParsePage(url, html);
+}
+```
+
+## REST Management API
+There are also some utility methods exposed by the REST API.
+
+### /api/Management/ListTransforms
+Returns a list of all transform files found, and their content.
+
+### /api/Management/ListTransforms?filter=test
+As above, optionally filtered by a given string or pattern.
+
+### /api/Management/PostTransforms?name=testing
+[BODY: {Content of new transform file}]
+Create or update a new transform file. 
+
+### /api/Management/ListUrlPatterns
+Returns a list of all regular expression url patterns from transform files found. May be used to decide if the client should request a transform for a URL.
+
+### /api/Management/Version
+Returns the current version and executing assembly name.
+
+## License
+
+This project is licensed under the MIT License.
+Part of Origami is based on openscraping-lib-csharp, which is also licensed under the MIT License.

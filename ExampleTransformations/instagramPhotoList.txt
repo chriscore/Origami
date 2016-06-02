@@ -1,0 +1,17 @@
+{
+	"_urlPatterns": ["^https?:\\/\\/www\\.instagram\\..*\\/tags.*"],
+	"_requiresJS": true,
+
+	"_xpath": "//div[@class='_myci9']//a[contains(@class,'_8mlbc')]",
+	"link":
+	{
+		"_xpath": ".",
+		"_transformations": 
+			[
+				{
+					"_type": "GetAttributeTransformation",
+					"_attributename": "href"
+				}
+			]
+	}
+}
