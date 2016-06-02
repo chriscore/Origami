@@ -111,6 +111,54 @@ void Main()
 }
 ```
 
+For the above transform on Twitter data, the response from either the Origami REST API or framework class library will similar to below:
+```
+[
+  {
+    "Name": "twitterStatus.txt",
+    "Data": {
+      "tweets": [
+        {
+          "id": "738044313276321792",
+          "content": {
+            "text": "After 3 years and 75K Tesla miles driven, Model X joins our family https://www.teslamotors.com/customer-stories/road-modelx/?utm_campaign=CS_ModelX_060116&utm_source=Twitter&utm_medium=social"
+          },
+          "author": {
+            "name": "Tesla Motors",
+            "screenName": "TeslaMotors",
+            "id": "13298072"
+          }
+        },
+        {
+          "id": "738050298279661568",
+          "content": {
+            "text": "@TeslaMotors wait how come some of the photos the S has a sunroof and others it doesn't?..."
+          },
+          "author": {
+            "name": "Chase Butler",
+            "screenName": "ChaseButlerTV",
+            "id": "345810515"
+          }
+        },
+        {
+          "id": "738044370876784640",
+          "content": {
+            "text": "@TeslaMotors Awesome"
+          },
+          "author": {
+            "name": "Ann Notari*Designer",
+            "screenName": "annnotari13",
+            "id": "834812053"
+          }
+        },
+        [...]
+      ]
+    },
+    "CollectionSource": "Direct"
+  }
+]
+```
+
 ## REST Management API
 There are also some utility methods exposed by the REST API.
 
