@@ -15,7 +15,8 @@ The postid property is extracted using a transformation. Origami is provided wit
 Below, the post id captured is transformed using a Regex match from "post id: 12345" to "12345".
 
 TRANSFORM FILE: craigslistAd.txt
-```{
+```
+{
 	"_urlPatterns": [ "^https?:\\/\\/.*\\.craigslist\\.[A-Za-z.]+\\/.+/\\d+.html$" ],
 	"title": "//span[@id='titletextonly']",
 	"body": "//section[@id='postingbody']",
@@ -31,7 +32,9 @@ TRANSFORM FILE: craigslistAd.txt
 			}	
 		]
 	}
-}```
+}
+```
+
 Result
 ```
 [
