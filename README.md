@@ -1,8 +1,6 @@
 # Origami
 Turn HTML into structured data
 
-[![chriscore MyGet Build Status](https://www.myget.org/BuildSource/Badge/chriscore?identifier=2e1ed033-4736-4537-9a85-1ad807bf13c3)](https://www.myget.org/)
-
 Origami is a framework and REST API for structured data extraction from HTML. The framework is configuration driven, and it is easy to write new configurations that support new types of unstructured HTML data. 
 
 Though Origami is provided with a number of data transformation functions that are used during data extraction (e.g get value of HTML elemnt attribute or return regex match on elemtent text etc), users of the framework may add their own transformations to easily extend the capablities when extracting content. These can be referenced as part of the transform configuration files.
@@ -11,7 +9,46 @@ Though Origami is provided with a number of data transformation functions that a
 This repo has a directory containing some example transform configuration files to use and test with.
 
 ## Usage
-This example trasform file describes the structure of a twitter post and replies.
+The below configuration describes to the framework how to transform the HTML of a craigslist ad into an object with properties: "title", "body", "photourl" and "postid".
+Origami reads transform configurations from a folder containing many different transformation configurations, and the "_urlPatterns" property in the config below tells the framework to only run for URLs matching those of craigslist ads.
+The postid property is extracted using a transformation. Origami is provided with a number of useful transformations, but more can easily be added for specific purposes.
+Below, the post id captured is transformed using a Regex match from "post id: 12345" to "12345".
+
+TRANSFORM FILE: craigslistAd.txt
+```{
+	"_urlPatterns": [ "^https?:\\/\\/.*\\.craigslist\\.[A-Za-z.]+\\/.+/\\d+.html$" ],
+	"title": "//span[@id='titletextonly']",
+	"body": "//section[@id='postingbody']",
+	"photourl": "//section[@class='userbody']//div[@class='gallery']//img",
+	"postid": 
+	{
+		"_xpath": "//p[@class='postinginfo'][contains(text(), 'post id')]",
+		"_transformations": 
+		[
+			{
+				"_type": "RegexMatchTransformation",
+				"_pattern": "post id: (\\d+)"
+			}	
+		]
+	}
+}```
+Result
+```
+[
+  {
+    "Name": "craigslistAd.txt",
+    "Data": {
+      "title": "Car for sale",
+	  "body": "Old car wanted rid... Will consider alternative payment in kittens",
+	  "postid": "post id: 12345"
+    },
+    "CollectionSource": "Direct"
+  }
+]
+```
+
+## More advanced usage
+This example trasform file describes the structure of a twitter post and replies. Becuase some of the selectors return multiple nodes (e.g "tweets") these are extracted as an array, with child transformations being applied to each member.
 TRANSFORM FILE: twitterPost.txt
 ```
 {
