@@ -199,7 +199,7 @@ namespace Origami.Framework
             return containers;
         }
 
-        private static void RemoveUnwantedTags(ConfigSection config, HtmlAgilityPack.HtmlNode parentNode)
+        private static void RemoveUnwantedTags(ConfigSection config, HtmlNode parentNode)
         {
             if (parentNode != null && config?.RemoveTags != null && config.RemoveTags.Count > 0)
             {

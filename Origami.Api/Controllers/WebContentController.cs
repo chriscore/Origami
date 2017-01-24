@@ -1,14 +1,17 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Web.Http;
+using NReco.PhantomJS;
 using OpenQA.Selenium;
 using Origami.Api.Properties;
 using Origami.Framework;
 using SeleniumWebDriver;
 using SeleniumWebDriver.Helpers;
+using Origami.Framework;
 
 namespace Origami.Api.Controllers
 {
@@ -39,15 +42,16 @@ namespace Origami.Api.Controllers
             bool renderJs = extractor.FindAllExtractors(url).Any(e => e.Item1.RequiresJavascript);
             if (renderJs)
             {
-                text = ExtractHtmlWithPhantomJS(url);
+                text = ExtractHtmlWithPhantomJSNoWebdriver(url);
                 var results = extractor.ExtractAll(url, text, "PhantomJS");
-
                 // If phantomJS failed to get anything from the page, try with Chrome for its better JS rendering engine.
+                /*
                 if (results.All(a => a.Data.Count == 0))
                 {
                     text = ExtractHtmlWithChrome(url);
                     results = extractor.ExtractAll(url, text, "Chrome");
                 }
+                */
 
                 return results;
             }
@@ -93,6 +97,36 @@ namespace Origami.Api.Controllers
             {
                 return wc.DownloadString(url);
             }   
+        }
+
+        private static string ExtractHtmlWithPhantomJSNoWebdriver(string url)
+        {
+            string javascriptQuery = @"var page = require('webpage').create();
+page.settings.userAgent = 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36';
+page.onError = function(msg, trace) {
+  //prevent js errors from showing in page.content
+  return;
+};
+page.open('" + url + @"', function (status) {
+    console.log(page.content); //page source
+    phantom.exit();
+});";
+
+            string text = "";
+            using (var outputStream = new MemoryStream())
+            using (var phantom = new PhantomJS())
+            {
+                phantom.CustomArgs = "--ssl-protocol=any --proxy-type=none";
+                phantom.RunScript(
+                    javascriptQuery,
+                    null,
+                    null,
+                    outputStream
+                );
+                text = System.Text.Encoding.UTF8.GetString(outputStream.ToArray());
+            }
+
+            return text;
         }
 
         private static string ExtractHtmlWithPhantomJS(string url)

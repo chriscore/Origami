@@ -241,6 +241,7 @@ namespace Origami.Framework.Config
                 ParseSection(rawChild.Value<JObject>(), childSection);
                 currentConfig.Children[childName] = childSection;
             }
+            // If we want to change to allow adding string literals, this is where we do it.
             else if (rawChild.Type == JTokenType.String)
             {
                 var childSection = new ConfigSection();

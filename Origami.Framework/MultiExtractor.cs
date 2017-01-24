@@ -101,24 +101,10 @@ namespace Origami.Framework
             };
         }
 
-        public IEnumerable<TransformResults> ExtractAll(string url, string html, string collectionSource = "Direct")
+        public IEnumerable<TransformResult> ExtractAll(string url, string html, string collectionSource = "Direct")
         {
             var extractors = FindAllExtractors(url);
-            return extractors.Select(extractor => new TransformResults(extractor?.Item1.ConfigName, extractor?.Item2?.Extract(html), collectionSource));
+            return extractors.Select(extractor => new TransformResult(extractor?.Item1.ConfigName, extractor?.Item2?.Extract(html), collectionSource));
         }
-    }
-
-    public class TransformResults
-    {
-        public TransformResults(string name, JContainer data, string collectionSource)
-        {
-            this.Name = name;
-            this.Data = data;
-            this.CollectionSource = collectionSource;
-        }
-
-        public string Name { get; set; }
-        public JContainer Data { get; set; }
-        public string CollectionSource { get; set; }
     }
 }

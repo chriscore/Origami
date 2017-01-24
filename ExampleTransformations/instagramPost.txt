@@ -17,9 +17,6 @@
 			]
 			
 		},
-		"author": 
-		{
-			"_xpath": ".//a[contains(@class,'_4zhc5')]"
-		}
+		"author": ".//a[contains(@class,'_4zhc5')]"
 	}
 }
