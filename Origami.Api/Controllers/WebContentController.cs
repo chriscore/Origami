@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Web.Http;
+using log4net;
 using NReco.PhantomJS;
 using OpenQA.Selenium;
 using Origami.Api.Properties;
@@ -17,12 +18,16 @@ namespace Origami.Api.Controllers
 {
     public class WebContentController : ApiController
     {
+        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         [HttpGet]
         public object TransformUrl()
         {
             var extractor = new MultiExtractor(Settings.Default.TransformationsDirectory, "*.txt");
             string text = null;
 
+            // TODO: fix why URL Querystring parameter needs to be provided double url encoded, 
+            // TODO: otherwise query string params in the url may break out.
             var queryString = Request.GetQueryNameValuePairs();
             var queryUrl = queryString.Where(a => a.Key.Equals("url"));
             if (!queryUrl.Any())
@@ -31,28 +36,24 @@ namespace Origami.Api.Controllers
             }
             var url = queryUrl.First().Value;
 
-            var matchingExtractors = extractor.FindAllExtractors(url);
+            Logger.Info($"Recieved request with querystring url: {url}");
+
+            var matchingExtractors = extractor.FindAllExtractors(url).ToList();
             if (!matchingExtractors.Any())
             {
+                Logger.Info($"No extractors matched for url {url}");
                 return BadRequest($"Could not find any extractors configured that match url: {url}");
             }
 
+            Logger.Info($"Matched extractors {matchingExtractors.Select(x => x.Item1?.ConfigName)}");
+            
             // If any of the extractors that are matched by the url have renderJS = true, then use
             // a browser that is capable of running JavaScript to render the DOM
-            bool renderJs = extractor.FindAllExtractors(url).Any(e => e.Item1.RequiresJavascript);
+            bool renderJs = matchingExtractors.Any(e => e.Item1.RequiresJavascript);
             if (renderJs)
             {
                 text = ExtractHtmlWithPhantomJSNoWebdriver(url);
                 var results = extractor.ExtractAll(url, text, "PhantomJS");
-                // If phantomJS failed to get anything from the page, try with Chrome for its better JS rendering engine.
-                /*
-                if (results.All(a => a.Data.Count == 0))
-                {
-                    text = ExtractHtmlWithChrome(url);
-                    results = extractor.ExtractAll(url, text, "Chrome");
-                }
-                */
-
                 return results;
             }
             else
@@ -73,6 +74,8 @@ namespace Origami.Api.Controllers
             }
             var url = urlQuery.First().Value;
 
+            Logger.Info($"Recieved request with querystring url: {url}");
+
             var requestContent = Request.Content;
             var html = requestContent.ReadAsStringAsync().Result;
             if (string.IsNullOrWhiteSpace(html))
@@ -80,11 +83,14 @@ namespace Origami.Api.Controllers
                 return BadRequest("Request body was empty");
             }
 
+            Logger.Info($"Recieved request with html: {html}");
+
             var extractor = new MultiExtractor(Settings.Default.TransformationsDirectory, "*.txt");
 
             var matchingExtractors = extractor.FindAllExtractors(url);
             if (!matchingExtractors.Any())
             {
+                Logger.Info($"No extractors matched for url {url}");
                 return BadRequest($"Could not find any extractors configured that match url: {url}");
             }
 
@@ -93,14 +99,19 @@ namespace Origami.Api.Controllers
 
         private static string ExtractHtmlWithWebClient(string url)
         {
+            Logger.Info($"Calling {url} with WebClient");
             using (WebClient wc = new WebClient())
             {
-                return wc.DownloadString(url);
+                var text = wc.DownloadString(url);
+                Logger.Debug($"Response from {url}:\r\n{text}");
+                return text;
             }   
         }
 
         private static string ExtractHtmlWithPhantomJSNoWebdriver(string url)
         {
+            Logger.Info($"Calling {url} with PhantomJS");
+
             string javascriptQuery = @"var page = require('webpage').create();
 page.settings.userAgent = 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36';
 page.onError = function(msg, trace) {
@@ -126,11 +137,14 @@ page.open('" + url + @"', function (status) {
                 text = System.Text.Encoding.UTF8.GetString(outputStream.ToArray());
             }
 
+            Logger.Debug($"Response from {url}:\r\n{text}");
             return text;
         }
 
         private static string ExtractHtmlWithPhantomJS(string url)
         {
+            Logger.Info($"Calling {url} with PhantomJS");
+
             string text = "";
             using (var driver = WebDriver.CreatePhantomDriver())
             {
@@ -142,11 +156,14 @@ page.open('" + url + @"', function (status) {
                 text = driver.PageSource;
             }
 
+            Logger.Debug($"Response from {url}:\r\n{text}");
+
             return text;
         }
 
         private static string ExtractHtmlWithChrome(string url)
         {
+            Logger.Info($"Calling {url} with Chrome");
             string text = "";
             using (var driver = WebDriver.CreateChromeDriver(null))
             {

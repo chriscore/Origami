@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Web.Http;
+using log4net;
 using Origami.Api.Properties;
 using Origami.Framework;
 
@@ -11,6 +12,8 @@ namespace Origami.Api.Controllers
 {
     public class ManagementController : ApiController
     {
+        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private string ExecutingAssemblyName
         {
             get
@@ -38,12 +41,15 @@ namespace Origami.Api.Controllers
         [HttpGet]
         public object Version()
         {
-            return new { Name = ExecutingAssemblyName, Version = AssemblyVersion };
+            Logger.Info($"Recieved call to /Version");
+            var toReturn = new { Name = ExecutingAssemblyName, Version = AssemblyVersion };
+            return toReturn;
         }
 
         [HttpGet]
         public object ListTransforms()
         {
+            Logger.Info($"Recieved call to /ListTransforms");
             var queryString = Request.GetQueryNameValuePairs();
 
             var q = queryString.Where(a => a.Key.Equals("filter"));
@@ -64,6 +70,7 @@ namespace Origami.Api.Controllers
         [HttpGet]
         public object ListUrlPatterns()
         {
+            Logger.Info($"Recieved call to /ListUrlPatterns");
             var extractor = new MultiExtractor(Settings.Default.TransformationsDirectory, "*.txt");
             return extractor.configsToExtractors.Select(a => new { a.Item1.ConfigName, a.Item1.UrlPatterns });
         }
@@ -71,6 +78,7 @@ namespace Origami.Api.Controllers
         [HttpPost]
         public object PostTransforms()
         {
+            Logger.Info($"Recieved call to /PostTransforms");
             var queryString = Request.GetQueryNameValuePairs();
 
             var q = queryString.Where(a => a.Key.Equals("name"));
