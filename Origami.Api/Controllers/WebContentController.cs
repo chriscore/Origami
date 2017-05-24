@@ -45,11 +45,11 @@ namespace Origami.Api.Controllers
                 return BadRequest($"Could not find any extractors configured that match url: {url}");
             }
 
-            Logger.Info($"Matched extractors {matchingExtractors.Select(x => x.Item1?.ConfigName)}");
+            Logger.Info($"Matched extractors {matchingExtractors.Select(x => x.Configuration?.ConfigName)}");
             
             // If any of the extractors that are matched by the url have renderJS = true, then use
             // a browser that is capable of running JavaScript to render the DOM
-            bool renderJs = matchingExtractors.Any(e => e.Item1.RequiresJavascript);
+            bool renderJs = matchingExtractors.Any(e => e.Configuration.RequiresJavascript);
             if (renderJs)
             {
                 text = ExtractHtmlWithPhantomJSNoWebdriver(url);

@@ -72,7 +72,7 @@ namespace Origami.Api.Controllers
         {
             Logger.Info($"Recieved call to /ListUrlPatterns");
             var extractor = new MultiExtractor(Settings.Default.TransformationsDirectory, "*.txt");
-            return extractor.configsToExtractors.Select(a => new { a.Item1.ConfigName, a.Item1.UrlPatterns });
+            return extractor.configsToExtractors.Select(a => new { a.Configuration.ConfigName, a.Configuration.UrlPatterns });
         }
         
         [HttpPost]

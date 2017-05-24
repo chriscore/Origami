@@ -1,0 +1,26 @@
+{
+	"_urlPatterns": ["disneyfanatic\\.com\\/[A-Za-z0-9_\\-]+\\/$"],
+	"Article": {
+		"_xpath": "//div[@class='content']",
+		"Title": ".//h1[contains(@class,'post-title')]",
+		"Metadata": ".//p[@class='post-meta']",
+		"HeaderImage": {
+			"_xpath": ".//div[@class='single-post-thumb']//img",
+			"_transformations": [{
+				"_type": "GetAttributeTransformation",
+				"_attributename": "src"
+			}]
+		},
+		"EntryContent": {
+			"_xpath": ".//div[@class='entry']/p",
+			"Text": ".",
+			"Image": {
+				"_xpath": ".//img",
+				"_transformations": [{
+					"_type": "GetAttributeTransformation",
+					"_attributename": "src"
+				}]
+			}
+		}
+	}
+}

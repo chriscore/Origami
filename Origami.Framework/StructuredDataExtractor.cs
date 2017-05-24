@@ -172,7 +172,7 @@ namespace Origami.Framework
                                 containers.Add(obj);
                             }
                         }
-                        else if (node.InnerText != null)
+                        else if (!string.IsNullOrWhiteSpace(node.InnerText))
                         {
                             containers.Add(HtmlEntity.DeEntitize(node.InnerText).Trim());
                         }
@@ -244,26 +244,89 @@ namespace Origami.Framework
 
                 var childObject = Extract(childName, childConfig, parentNode, logicalParents);
 
+                var token = childObject as JContainer;
+                if (token != null)
+                {
+                    childObject = JsonHelper.RemoveEmptyChildren(token);
+                }
+
                 var o = childObject as JObject;
                 if (o != null)
                 {
                     if (o.Count > 0)
                     {
-                        container[childName] = (JToken)childObject;
+                        container[childName] = (JToken) childObject;
                     }
                 }
                 else if (childObject is JArray)
                 {
-                    if (((JArray)childObject).Count > 0)
+                    if (((JArray) childObject).Count > 0)
                     {
-                        container[childName] = (JToken)childObject;
+                        container[childName] = (JToken) childObject;
+                    }
+                }
+                else if (childObject is JProperty)
+                {
+                    var jp = (JProperty) childObject;
+                    if (jp.Children().Any(x => !string.IsNullOrEmpty(x.ToString()))) // dont write JSON for properties that have no data.
+                    {
+                        container[childName] = (JToken) childObject;
                     }
                 }
                 else
                 {
-                    container[childName] = (JToken)childObject;
+                    container[childName] = (JToken) childObject;
                 }
             }
+        }
+    }
+
+    public static class JsonHelper
+    {
+        public static JContainer RemoveEmptyChildren(JContainer token)
+        {
+            if (token.Type == JTokenType.Object)
+            {
+                var copy = new JObject();
+                foreach (var prop in token.Children<JProperty>())
+                {
+                    var child = prop.Value;
+                    if (child.HasValues)
+                    {
+                        child = RemoveEmptyChildren((JContainer)child);
+                    }
+                    if (!IsEmpty(child))
+                    {
+                        copy.Add(prop.Name, child);
+                    }
+                }
+                return copy;
+            }
+            else if (token.Type == JTokenType.Array)
+            {
+                var copy = new JArray();
+                foreach (var item in token.Children())
+                {
+                    var child = item;
+                    if (child.HasValues)
+                    {
+                        child = RemoveEmptyChildren((JContainer)child);
+                    }
+                    if (!IsEmpty(child))
+                    {
+                        copy.Add(child);
+                    }
+                }
+                return copy;
+            }
+            return token;
+        }
+
+        public static bool IsEmpty(JToken token)
+        {
+            return (token.Type == JTokenType.Null) ||
+                   (token.Type == JTokenType.Array && !token.HasValues) ||
+                   (token.Type == JTokenType.Object && !token.HasValues);
         }
     }
 }

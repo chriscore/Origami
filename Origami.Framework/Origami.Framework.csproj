@@ -74,6 +74,7 @@
     <Compile Include="Transformations\CastToIntegerTransformation.cs" />
     <Compile Include="Transformations\DateTimeTransformation.cs" />
     <Compile Include="Transformations\ExtractIntegerTransformation.cs" />
+    <Compile Include="Transformations\ExtractorWrapper.cs" />
     <Compile Include="Transformations\GetAttributeTransformation.cs" />
     <Compile Include="Transformations\ITransformationFromHtml.cs" />
     <Compile Include="Transformations\ITransformationFromObject.cs" />

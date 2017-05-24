@@ -1,0 +1,51 @@
+{
+	"_urlPatterns": ["^https?:\\/\\/twitter\\.[a-z]*\\/search.*"],
+	"tweets":
+	{
+		"_xpath": "//div[@class='stream']//ol[contains(@class,'stream-items')]",
+		"id":
+		{
+			"_xpath": "./li",
+			"_transformations": 
+			[
+				{
+					"_type": "GetAttributeTransformation",
+					"_attributename": "data-item-id"
+				}
+			]
+		},
+		"content":
+		{
+			"text": ".//div[@class='js-tweet-text-container']",
+			"photo":
+			{
+				"_xpath": ".//div[contains(@class,'photo')]//img",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "src"
+					}
+				]
+			}
+		},
+		"author":
+		{
+			"_xpath": ".",
+			"name": ".//strong[contains(@class,'fullname')]",
+			"screenName":".//span[contains(@class,'username')]",
+			"id":
+			{
+				"_xpath": ".//a[contains(@class,'js-action-profile')]",
+				"_transformations": 
+				[
+					{
+						"_type": "GetAttributeTransformation",
+						"_attributename": "data-user-id"
+					}
+				]
+			}
+		}
+	}
+	
+}

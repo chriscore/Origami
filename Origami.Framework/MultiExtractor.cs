@@ -7,6 +7,7 @@ using log4net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Origami.Framework.Config;
+using Origami.Framework.Transformations;
 
 namespace Origami.Framework
 {
@@ -14,12 +15,12 @@ namespace Origami.Framework
     {
         private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public readonly List<Tuple<ConfigSection, StructuredDataExtractor>> configsToExtractors = new List<Tuple<ConfigSection, StructuredDataExtractor>>();
+        public readonly List<ExtractorWrapper> configsToExtractors = new List<ExtractorWrapper>();
 
         public MultiExtractor(string configRootFolder, string configFilesPattern)
         {
             Logger.Info($"Creating a new MultiExtractor with config: {configRootFolder} and pattern {configFilesPattern}");
-            var files = Directory.GetFiles(configRootFolder, configFilesPattern);
+            var files = Directory.GetFiles(configRootFolder, configFilesPattern, SearchOption.AllDirectories);
             var regexRules = 0; // used to configure the C# regex cache size
 
             Logger.Info($"{files.Length} config files found");
@@ -30,7 +31,7 @@ namespace Origami.Framework
                     Logger.Info($"Building extractor config for {config.ConfigName}");
                     regexRules += config.UrlPatterns.Count;
                     var extractor = new StructuredDataExtractor(config);
-                    configsToExtractors.Add(Tuple.Create(config, extractor));
+                    configsToExtractors.Add(new ExtractorWrapper(config, extractor));
                 }
             }
 
@@ -43,47 +44,44 @@ namespace Origami.Framework
             Logger.Info("Finished creating MultiExtractor");
         }
 
-        public Tuple<ConfigSection, StructuredDataExtractor> FindFirstExtractor(string url)
+        public ExtractorWrapper FindFirstExtractor(string url)
         {
             Logger.Info($"Finding first extractor for {url}");
-            foreach (var tuple in configsToExtractors)
+            foreach (var extractor in configsToExtractors)
             {
-                if (tuple.Item1.UrlPatterns == null || tuple.Item1.UrlPatterns.Count <= 0)
+                if (extractor.Configuration.UrlPatterns == null || extractor.Configuration.UrlPatterns.Count <= 0)
                 {
                     continue;
                 }
 
-                if (!tuple.Item1.UrlPatterns.Any(rule => Regex.IsMatch(url, rule)))
+                if (!extractor.Configuration.UrlPatterns.Any(rule => Regex.IsMatch(url, rule)))
                 {
                     continue;
                 }
-
-                var extractor = tuple;
-
-                Logger.Info($"Extractor matched: {extractor.Item1?.ConfigName}");
+                
+                Logger.Info($"Extractor matched: {extractor.Configuration?.ConfigName}");
                 return extractor;
             }
 
             return null;
         }
 
-        public IEnumerable<Tuple<ConfigSection, StructuredDataExtractor>> FindAllExtractors(string url)
+        public IEnumerable<ExtractorWrapper> FindAllExtractors(string url)
         {
             Logger.Info($"Finding all extractors for {url}");
-            foreach (var tuple in configsToExtractors)
+            foreach (var extractor in configsToExtractors)
             {
-                if (tuple.Item1.UrlPatterns == null || tuple.Item1.UrlPatterns.Count <= 0)
+                if (extractor.Configuration.UrlPatterns == null || extractor.Configuration.UrlPatterns.Count <= 0)
                 {
                     continue;
                 }
 
-                if (!tuple.Item1.UrlPatterns.Any(rule => Regex.IsMatch(url, rule)))
+                if (!extractor.Configuration.UrlPatterns.Any(rule => Regex.IsMatch(url, rule)))
                 {
                     continue;
                 }
-
-                var extractor = tuple;
-                Logger.Info($"Extractor matched: {extractor.Item1?.ConfigName}");
+                
+                Logger.Info($"Extractor matched: {extractor.Configuration?.ConfigName}");
                 yield return extractor;
             }
         }
@@ -100,7 +98,7 @@ namespace Origami.Framework
                 return null;
             }
 
-            var structuredJson = extractor.Item2.Extract(html);
+            var structuredJson = extractor.Extractor.Extract(html);
             var serializedJson = JsonConvert.SerializeObject(structuredJson, Formatting.Indented);
 
             return serializedJson;
@@ -115,8 +113,8 @@ namespace Origami.Framework
             
             return new
             {
-                Name = extractor?.Item1?.ConfigName,
-                Data = extractor?.Item2.Extract(html)
+                Name = extractor?.Configuration?.ConfigName,
+                Data = extractor?.Extractor.Extract(html)
             };
         }
 
@@ -126,7 +124,7 @@ namespace Origami.Framework
             Logger.Debug($"Html: {html}");
 
             var extractors = FindAllExtractors(url);
-            return extractors.Select(extractor => new TransformResult(extractor?.Item1.ConfigName, extractor?.Item2?.Extract(html), collectionSource));
+            return extractors.Select(extractor => new TransformResult(extractor?.Configuration.ConfigName, extractor?.Extractor?.Extract(html), collectionSource));
         }
     }
 }

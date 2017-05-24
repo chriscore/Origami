@@ -1,0 +1,45 @@
+{
+	"_urlPatterns": ["thedisneyblog\\.com\\/\\d{4}\\/\\d{2}\\/\\d{2}\\/"],
+	"Title": "//h1[@class='article-title']",
+	"Posts": 
+	{
+		"_forceArray": true,
+		"EntryContent": 
+		{
+			"_xpath": "//div[@class='entry-content']/p",
+			"Text": ".",
+			"Image": {
+				"_xpath": ".//img",
+				"_transformations": [{
+					"_type": "GetAttributeTransformation",
+					"_attributename": "src"
+				}]
+			},
+			"Embedded": {
+				"_xpath": ".//iframe",
+				"_transformations": [{
+					"_type": "GetAttributeTransformation",
+					"_attributename": "src"
+				}]
+			}
+		},
+		"EntryAttachment": 
+		{
+			"_xpath": "//div[@class='entry-attachment']",
+			"Image": {
+				"_xpath": ".//img",
+				"_transformations": [{
+					"_type": "GetAttributeTransformation",
+					"_attributename": "src"
+				}]
+			},
+			"Embedded": {
+				"_xpath": ".//iframe",
+				"_transformations": [{
+					"_type": "GetAttributeTransformation",
+					"_attributename": "src"
+				}]
+			}
+		}
+	}
+}

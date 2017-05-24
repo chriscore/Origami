@@ -1,0 +1,32 @@
+{
+	"_urlPatterns": ["disboards.com\\/threads\\/"],
+    "Title": "//div[@class='titleBar']",
+    "Posts":
+    {
+      "_xpath": "//ol[@id='messageList']/li",
+      "Text": ".//div[@class='messageContent']",
+      "Sender": ".//div[@class='messageUserInfo']//a[@class='username']",
+	  "Id": 
+      {
+        "_xpath": ".",
+        "_transformations": 
+        [
+          {
+            "_type": "GetAttributeTransformation",
+            "_attributename": "id"
+          }
+        ]
+      },
+	  "Date": 
+      {
+        "_xpath": ".//span[@class='DateTime']",
+        "_transformations": 
+        [
+          {
+            "_type": "GetAttributeTransformation",
+            "_attributename": "title"
+          }
+        ]
+      }
+    }
+  }

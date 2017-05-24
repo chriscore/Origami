@@ -1,60 +1,41 @@
 {
-	"_urlPatterns": ["^https?:\\/\\/slate\\.adobe\\.com.*", "^https?:\\/\\/spark\\.adobe\\.com.*"],
-	"items":
-	{
-		"_xpath": "//div[contains(@class,'section-view')]",
-		"content":
-		{
-			"text": 
-			{
-				"_xpath": ".",
-				"_transformation": "RemoveExtraWhitespaceTransformation"
-			},
-			"images": 
-			{
-				"_xpath": ".//img",
-				"_transformations": 
-				[
-					{
-						"_type": "GetAttributeTransformation",
-						"_attributename": "src"
-					}
-				]
-			},
-			"backgroundImages": 
-			{
-				"_xpath": ".//div[@class='section-background-image']",
-				"_transformations": 
-				[
-					{
-						"_type": "RegexReplaceTransformation",
-						"_attributename": "style",
-						"_pattern": "background-image:\\surl"
-					}
-				]
-			},
-			"iframeLinks": 
-			{
-				"_xpath": ".//iframe",
-				"_transformations": 
-				[
-					{
-						"_type": "GetAttributeTransformation",
-						"_attributename": "src"
-					}
-				]
-			},
-			"buttonLinks": 
-			{
-				"_xpath": ".//a[@class='link-button ']",
-				"_transformations": 
-				[
-					{
-						"_type": "GetAttributeTransformation",
-						"_attributename": "href"
-					}
-				]
-			}
+	"_urlPatterns": ["^https?:\\/\\/slate\\.adobe\\.com.*",	"^https?:\\/\\/spark\\.adobe\\.com.*"],
+	"_xpath": "//div[contains(@class,'section-view')]",
+	"content": {
+		"title": {
+			"_xpath": ".//span[@class='title']"
+		},
+		"text": {
+			"_xpath": ".//p",
+			"_transformation": "RemoveExtraWhitespaceTransformation"
+		},
+		"images": {
+			"_xpath": ".//img",
+			"_transformations": [{
+				"_type": "GetAttributeTransformation",
+				"_attributename": "src"
+			}]
+		},
+		"backgroundImages": {
+			"_xpath": ".//div[@class='section-background-image']//a",
+			"_transformations": [{
+				"_type": "GetAttributeTransformation",
+				"_attributename": "href"
+			}]
+		},
+		"iframeLinks": {
+			"_xpath": ".//iframe",
+			"_transformations": [{
+				"_type": "GetAttributeTransformation",
+				"_attributename": "src"
+			}]
+		},
+		"buttonLinks": {
+			"_xpath": ".//a[@class='link-button ']",
+			"_transformations": [{
+				"_type": "GetAttributeTransformation",
+				"_attributename": "href"
+			}]
 		}
 	}
 }
