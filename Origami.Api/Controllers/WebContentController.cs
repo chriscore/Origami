@@ -23,18 +23,30 @@ namespace Origami.Api.Controllers
         [HttpGet]
         public object TransformUrl()
         {
-            var extractor = new MultiExtractor(Settings.Default.TransformationsDirectory, "*.txt");
+            
             string text = null;
 
             // TODO: fix why URL Querystring parameter needs to be provided double url encoded, 
             // TODO: otherwise query string params in the url may break out.
             var queryString = Request.GetQueryNameValuePairs();
-            var queryUrl = queryString.Where(a => a.Key.Equals("url"));
+            var queryUrl = queryString.Where(a => a.Key.Equals("url", StringComparison.InvariantCultureIgnoreCase));
             if (!queryUrl.Any())
             {
                 return BadRequest("Request parameter 'url' was missing");
             }
             var url = queryUrl.First().Value;
+
+            MultiExtractor extractor = null;
+
+            var queryExtractorName = queryString.Where(a => a.Key.Equals("extractorName", StringComparison.InvariantCultureIgnoreCase));
+            if (queryExtractorName.Any())
+            {
+                extractor = new MultiExtractor(Settings.Default.TransformationsDirectory, $"{queryExtractorName.First().Value}.txt");
+            }
+            else
+            {
+                extractor = new MultiExtractor(Settings.Default.TransformationsDirectory, "*.txt");
+            }
 
             Logger.Info($"Recieved request with querystring url: {url}");
 
@@ -52,7 +64,8 @@ namespace Origami.Api.Controllers
             bool renderJs = matchingExtractors.Any(e => e.Configuration.RequiresJavascript);
             if (renderJs)
             {
-                text = ExtractHtmlWithPhantomJSNoWebdriver(url);
+                text = ExtractHtmlWithChrome(url);
+                //text = ExtractHtmlWithPhantomJSNoWebdriver(url);
                 var results = extractor.ExtractAll(url, text, "PhantomJS");
                 return results;
             }

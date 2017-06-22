@@ -1,0 +1,52 @@
+{
+	"_urlPatterns": ["^https?:*"],
+	"_requiresJS": true,
+	"links":
+	{
+		"_xpath": "//a[contains(@href, 'www.youtube')]",
+		"_forceArray": true,
+		"_transformations": 
+		[
+			{
+				"_type": "GetAttributeTransformation",
+				"_attributename": "href"
+			}
+		]
+	},
+	"iframes":
+	{
+		"_xpath": "//iframe[contains(@src, 'www.youtube')]",
+		"_forceArray": true,
+		"_transformations": 
+		[
+			{
+				"_type": "GetAttributeTransformation",
+				"_attributename": "src"
+			}
+		]
+	},
+	"objects":
+	{
+		"_xpath": "//object[contains(@data, 'www.youtube')]",
+		"_forceArray": true,
+		"_transformations": 
+		[
+			{
+				"_type": "GetAttributeTransformation",
+				"_attributename": "data"
+			}
+		]
+	},
+	"embeds":
+	{
+		"_xpath": "//embed[contains(@src, 'www.youtube')]",
+		"_forceArray": true,
+		"_transformations": 
+		[
+			{
+				"_type": "GetAttributeTransformation",
+				"_attributename": "src"
+			}
+		]
+	},
+}

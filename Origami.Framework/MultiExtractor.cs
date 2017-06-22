@@ -104,18 +104,14 @@ namespace Origami.Framework
             return serializedJson;
         }
 
-        public object Extract(string url, string html)
+        public TransformResult Extract(string url, string html)
         {
             Logger.Info($"Parsing page with first extractor with url {url}");
             Logger.Debug($"Html: {html}");
 
             var extractor = FindFirstExtractor(url);
-            
-            return new
-            {
-                Name = extractor?.Configuration?.ConfigName,
-                Data = extractor?.Extractor.Extract(html)
-            };
+
+            return new TransformResult(extractor?.Configuration?.ConfigName, url, extractor?.Extractor.Extract(html), "Direct");
         }
 
         public IEnumerable<TransformResult> ExtractAll(string url, string html, string collectionSource = "Direct")
@@ -124,7 +120,7 @@ namespace Origami.Framework
             Logger.Debug($"Html: {html}");
 
             var extractors = FindAllExtractors(url);
-            return extractors.Select(extractor => new TransformResult(extractor?.Configuration.ConfigName, extractor?.Extractor?.Extract(html), collectionSource));
+            return extractors.Select(extractor => new TransformResult(extractor?.Configuration.ConfigName, url, extractor?.Extractor?.Extract(html), collectionSource));
         }
     }
 }

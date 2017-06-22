@@ -1,0 +1,4 @@
+{
+	"_urlPatterns": ["^https?:\\/\\/twitter\\.[a-z]*\\/.*\\/following.*"],
+	"following": "//a[contains(@class,'ProfileCard')]"
+}

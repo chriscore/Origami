@@ -1,0 +1,36 @@
+{
+	"_urlPatterns": ["^https?:\/\/.+\\.youtube\\.[a-z]*\/watch.+"],
+	"Title":
+	{
+		"_xpath": "//meta[@name='title']",
+		"_transformations": 
+		[
+			{
+				"_type": "GetAttributeTransformation",
+				"_attributename": "content"
+			}
+		]
+	},
+	"Description":
+	{
+		"_xpath": "//meta[@name='description']",
+		"_transformations": 
+		[
+			{
+				"_type": "GetAttributeTransformation",
+				"_attributename": "content"
+			}
+		]
+	},
+	"KeyWords":
+	{
+		"_xpath": "//meta[@name='keywords']",
+		"_transformations": 
+		[
+			{
+				"_type": "GetAttributeTransformation",
+				"_attributename": "content"
+			}
+		]
+	}
+}

@@ -16,7 +16,13 @@ namespace Origami.Framework
             this.CollectionSource = collectionSource;
         }
 
+        public TransformResult(string name, string url, JContainer data, string collectionSource) : this(name, data, collectionSource)
+        {
+            Url = url;
+        }
+
         public string Name { get; set; }
+        public string Url { get; set; }
         public JContainer Data { get; set; }
         public string CollectionSource { get; set; }
     }
